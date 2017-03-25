@@ -134,6 +134,14 @@ void py_add_num_field (PyObject* dict, const char *name, double value) {
   PyDict_SetItemString (dict, name, PyFloat_FromDouble(value));
 }
 
+void py_add_int_field_arr (PyObject* list, int num, int value) {
+  assert(PyList_Check(list));
+  if(num >= 0)
+    PyList_SetItem (list, num, PyInt_FromLong (value));
+  else // Append
+    PyList_Append  (list, PyInt_FromLong (value));
+}
+
 PyObject* get_tgl_peer_type (int x) {
   PyObject *type;
 

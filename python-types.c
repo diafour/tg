@@ -1402,6 +1402,52 @@ tgl_Msg_getreply_id (tgl_Msg *self, void *closure)
   return ret;
 }
 
+/**
+ * fill reply markup dict
+ * structure pointer is M->reply_markup
+ *
+ * structure has flags, rows count
+ * array of row starts and total buttons count
+ * in the last item of row_start (row_start[rows])
+ * https://github.com/vysheng/tgl/blob/ffb04caca71de0cddf28cd33a4575922900a59ed/structures.c#L1942-L1950
+ */
+static PyObject *
+tgl_Msg_getreply_markup (tgl_Msg *self, void *closure)
+{
+  if (!self->msg->reply_markup) {
+    return Py_RETURN_NONE;
+  }
+
+  PyObject *ret;
+  ret = PyDict_New();
+
+  int rows = self->msg->reply_markup->rows;
+
+  py_add_num_field (ret, "refcnt", self->msg->reply_markup->refcnt);
+  py_add_num_field (ret, "flags", self->msg->reply_markup->flags);
+  py_add_num_field (ret, "rows", rows);
+
+  PyObject *row_start;
+  row_start = PyList_New(rows);
+  int rr;
+  for(rr=0; rr < rows; rr++) {
+    py_add_int_field_arr(row_start, rr, self->msg->reply_markup->row_start[rr];
+  }
+  PyDict_SetItemString(ret, "row_start", row_start);
+
+  PyObject *buttons;
+  int buttons_count = self->msg->reply_markup->row_start[rows];
+  buttons = PyList_New(buttons_count);
+  int bc;
+  for(bc = 0; bc < buttons_count; bc++) {
+    py_add_string_field_arr(ret, bc, self->msg->reply_markup->buttons[bc]);
+  }
+  PyDict_SetItemString(ret, "buttons", row_start);
+
+  Py_XINCREF(ret);
+  return ret;
+}
+
 // All load methods are implemented the same, just alias load_document
 static PyObject *
 tgl_Msg_load_document (tgl_Msg *self, PyObject *args, PyObject *kwargs)
@@ -1497,6 +1543,7 @@ static PyGetSetDef tgl_Msg_getseters[] = {
   {"reply", (getter)tgl_Msg_getreply, NULL, "", NULL},
   {"reply_id", (getter)tgl_Msg_getreply_id, NULL, "", NULL},
   {"action", (getter)tgl_Msg_getaction, NULL, "", NULL},
+  {"reply_markup", (getter)tgl_Msg_getreply_markup, NULL, "", NULL},
   {NULL}  /* Sentinel */
 };
 
