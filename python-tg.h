@@ -86,4 +86,5 @@ PyObject* py_extf(PyObject *self, PyObject *args);
 void py_add_string_field (PyObject* dict, char *name, const char *value);
 void py_add_string_field_arr (PyObject* list, int num, const char *value);
 void py_add_num_field (PyObject* dict, const char *name, double value);
+void py_add_int_field_arr (PyObject* list, int num, int value);
 #endif

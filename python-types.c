@@ -1424,7 +1424,7 @@ static PyObject *
 tgl_Msg_getreply_markup (tgl_Msg *self, void *closure)
 {
   if (!self->msg->reply_markup) {
-    return Py_RETURN_NONE;
+    Py_RETURN_NONE;
   }
 
   PyObject *ret;
@@ -1440,7 +1440,7 @@ tgl_Msg_getreply_markup (tgl_Msg *self, void *closure)
   row_start = PyList_New(rows);
   int rr;
   for(rr=0; rr < rows; rr++) {
-    py_add_int_field_arr(row_start, rr, self->msg->reply_markup->row_start[rr];
+    py_add_int_field_arr(row_start, rr, self->msg->reply_markup->row_start[rr]);
   }
   PyDict_SetItemString(ret, "row_start", row_start);
 
@@ -1449,9 +1449,9 @@ tgl_Msg_getreply_markup (tgl_Msg *self, void *closure)
   buttons = PyList_New(buttons_count);
   int bc;
   for(bc = 0; bc < buttons_count; bc++) {
-    py_add_string_field_arr(ret, bc, self->msg->reply_markup->buttons[bc]);
+    py_add_string_field_arr(buttons, bc, self->msg->reply_markup->buttons[bc]);
   }
-  PyDict_SetItemString(ret, "buttons", row_start);
+  PyDict_SetItemString(ret, "buttons", buttons);
 
   Py_XINCREF(ret);
   return ret;
@@ -1511,7 +1511,7 @@ tgl_Msg_repr(tgl_Msg *self)
 {
   PyObject *ret;
 #if PY_VERSION_HEX < 0x02070900
-  ret = PyUnicode_FromFormat("<tgl.Msg id=%ld>", self->msg->id);
+  ret = PyUnicode_FromFormat("<tgl.Msg id=%ld>", self->msg->permanent_id.id);
 #else
   ret = PyUnicode_FromFormat("<tgl.Msg id=%ld, flags=%d, mention=%R, out=%R, unread=%R, service=%R, src=%R, "
                              "dest=%R, text=%R, media=%R, date=%R, fwd_src=%R, fwd_date=%R, reply_id=%R, reply=%R>",
